@@ -100,11 +100,11 @@ T = bddvars("T", n, n)
 k = int(data[0].split()[1])
 restrictions = {}
 for i in range(1, k + 1):
-    x = data[i].split()[0]
-    y = data[i].split()[1]
-    restrictions[x + " " + y] = 1
+    x = int(data[i].split()[0])
+    y = int(data[i].split()[1])
+    restrictions[T[x][y]] = 1
 
-bdd = n_queens_expression(T, n)
+bdd = n_queens_expression(T, n).restrict(restrictions)
 
 if bdd.is_zero():
 	satisfatibilidade = "UNSAT"
