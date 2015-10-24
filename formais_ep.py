@@ -78,6 +78,19 @@ def n_queens_expression(T, n):
     expr = expr & diagonal_restrictions_1(T, n) & diagonal_restrictions_2(T, n)
     expr = expr & diagonal_restrictions_3(T, n) & diagonal_restrictions_4(T, n)
     return expr 
+
+def display(solution, T, n):
+    chars = list()
+    for r in range(n):
+        for c in range(n):
+            if solution[T[r,c]]:
+                chars.append("Q")
+            else:
+                chars.append(".")
+        if r != n-1:
+            chars.append("\n")
+    print("".join(chars))
+
 #~ ´ ^ ` <= nao apague esta linha por enquanto
 data = sys.stdin.readlines()
 
@@ -92,5 +105,12 @@ for i in range(1, k + 1):
     restrictions[x + " " + y] = 1
 
 bdd = n_queens_expression(T, n)
-print(not bdd.is_zero()) #imprime se e possivel preencher
+
+if bdd.is_zero():
+	satisfatibilidade = "UNSAT"
+	print(satisfatibilidade) #imprime se e possivel preencher
+else:
+	satisfatibilidade = "SAT"
+	print(satisfatibilidade) #imprime se e possivel preencher
+	display(bdd.satisfy_one(), T, n)
 
