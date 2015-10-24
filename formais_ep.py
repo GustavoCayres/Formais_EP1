@@ -1,4 +1,5 @@
 from pyeda.inter import *
+import sys
 
 #restricts the existence of queens per row
 def row_restrictions(T, n):
@@ -78,8 +79,18 @@ def n_queens_expression(T, n):
     expr = expr & diagonal_restrictions_3(T, n) & diagonal_restrictions_4(T, n)
     return expr 
 #~ ´ ^ ` <= nao apague esta linha por enquanto
-n = int(input("Entre com o tamanho do tabuleiro: "))
+data = sys.stdin.readlines()
+
+n = int(data[0].split()[0])
 T = bddvars("T", n, n)
+
+k = int(data[0].split()[1])
+restrictions = {}
+for i in range(1, k + 1):
+    x = data[i].split()[0]
+    y = data[i].split()[1]
+    restrictions[x + " " + y] = 1
+
 bdd = n_queens_expression(T, n)
 print(not bdd.is_zero()) #imprime se e possivel preencher
 
