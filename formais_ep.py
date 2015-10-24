@@ -13,7 +13,7 @@ def row_restrictions(T, n):
         for j in range(0, n):
             temp = temp | T[i][j]
         row_restriction = row_restriction & temp
-    return bdd2expr(row_restriction)
+    return row_restriction
 
 #restricts the existence of queens per column
 def column_restrictions(T, n):
@@ -28,7 +28,7 @@ def column_restrictions(T, n):
         for i in range(0, n):
             temp = temp | T[i][j]
         column_restriction = column_restriction & temp
-    return bdd2expr(column_restriction)
+    return column_restriction
 
 #restricts the existence of queens per diagonal above the main one
 def diagonal_restrictions_1(T, n):
@@ -39,7 +39,7 @@ def diagonal_restrictions_1(T, n):
             for j in range(i + 1, n - k):
                 temp = temp & ~T[j][j + k]
             diagonal_restrictions = diagonal_restrictions & (~T[i][i + k] | temp)
-    return bdd2expr(diagonal_restrictions)
+    return diagonal_restrictions
 
 #restricts the existence of queens per diagonal below the main one
 def diagonal_restrictions_2(T, n):
@@ -50,7 +50,7 @@ def diagonal_restrictions_2(T, n):
             for j in range(i + 1, n - k):
                 temp = temp & ~T[j + k][j]
             diagonal_restrictions = diagonal_restrictions & (~T[i + k][i] | temp)
-    return bdd2expr(diagonal_restrictions)
+    return diagonal_restrictions
 
 def diagonal_restrictions_3(T, n):
     diagonal_restrictions = 1
@@ -60,7 +60,7 @@ def diagonal_restrictions_3(T, n):
             for j in range(i + 1, n - k):
                 temp = temp & ~T[n - 1 - k - j][j]
             diagonal_restrictions = diagonal_restrictions & (~T[n - 1 - k - i][i] | temp)
-    return bdd2expr(diagonal_restrictions)
+    return diagonal_restrictions
 
 def diagonal_restrictions_4(T, n):
     diagonal_restrictions = 1
@@ -70,11 +70,16 @@ def diagonal_restrictions_4(T, n):
             for j in range(i + 1, n - k):
                 temp = temp & ~T[n - 1 - j][j + k]
             diagonal_restrictions = diagonal_restrictions & (~T[n - 1 - i][i + k] | temp)
-    return bdd2expr(diagonal_restrictions)
-    
+    return diagonal_restrictions
+
+def n_queens_expression(T, n):
+    expr = row_restrictions(T, n) & column_restrictions(T, n)
+    expr = expr & diagonal_restrictions_1(T, n) & diagonal_restrictions_2(T, n)
+    expr = expr & diagonal_restrictions_3(T, n) & diagonal_restrictions_4(T, n)
+    return expr 
 #~ ´ ^ ` <= nao apague esta linha por enquanto
-#n = int(input("Entre com o tamanho do tabuleiro: "))
-n = 3
+n = int(input("Entre com o tamanho do tabuleiro: "))
 T = bddvars("T", n, n)
-print(expr2truthtable(diagonal_restrictions_4(T, n)))
+bdd = n_queens_expression(T, n)
+print(not bdd.is_zero()) #imprime se e possivel preencher
 
