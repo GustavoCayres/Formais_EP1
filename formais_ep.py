@@ -1,8 +1,14 @@
+###########################################
+#Grupo:
+#   Gustavo Rodrigues Cayres, nUSP: 8584323
+#   Pedro Marcondes
+###########################################
+
 from pyeda.inter import *
 import sys
 
 #restricts the existence of queens per row
-def row_restrictions(T, n):
+def row_restrictions(T, n, queens):
     row_restriction = 1
     for i in range (0, n):
         for k in range(0, n - 1):
@@ -10,14 +16,17 @@ def row_restrictions(T, n):
             for j in range(k + 1, n):
                 temp = temp & ~T[i][j]
             row_restriction = row_restriction & (~T[i][k] | temp)
+    row_restriction = row_restriction.restrict(queens)
+    for i in range (0, n):
         temp = 0
         for j in range(0, n):
             temp = temp | T[i][j]
         row_restriction = row_restriction & temp
+    row_restriction = row_restriction.restrict(queens)
     return row_restriction
 
 #restricts the existence of queens per column
-def column_restrictions(T, n):
+def column_restrictions(T, n, queens):
     column_restriction = 1
     for j in range(0, n):
         for k in range(0, n - 1):
@@ -25,64 +34,68 @@ def column_restrictions(T, n):
             for i in range(k + 1, n):
                 temp = temp & ~T[i][j]
             column_restriction = column_restriction & (~T[k][j] | temp)
+    column_restriction = column_restriction.restrict(queens)
+    for j in range(0, n):
         temp = 0
         for i in range(0, n):
             temp = temp | T[i][j]
         column_restriction = column_restriction & temp
+    column_restriction = column_restriction.restrict(queens)
     return column_restriction
 
 #restricts the existence of queens per diagonal above the main one
-def diagonal_restrictions_1(T, n):
-    diagonal_restrictions = 1
+def diagonal_restrictions_1(T, n, queens):
+    diagonal_restriction = 1
     for k in range(0, n):
         for i in range(0, n - 1 - k):
             temp = 1
             for j in range(i + 1, n - k):
                 temp = temp & ~T[j][j + k]
-            diagonal_restrictions = diagonal_restrictions & (~T[i][i + k] | temp)
-    return diagonal_restrictions
+            diagonal_restriction = diagonal_restriction & (~T[i][i + k] | temp)
+    diagonal_restriction = diagonal_restriction.restrict(queens)     
+    return diagonal_restriction
 
 #restricts the existence of queens per diagonal below the main one
-def diagonal_restrictions_2(T, n):
-    diagonal_restrictions = 1
+def diagonal_restrictions_2(T, n, queens):
+    diagonal_restriction = 1
     for k in range(1, n):
         for i in range(0, n - 1 - k):
             temp = 1
             for j in range(i + 1, n - k):
                 temp = temp & ~T[j + k][j]
-            diagonal_restrictions = diagonal_restrictions & (~T[i + k][i] | temp)
-    return diagonal_restrictions
+            diagonal_restriction = diagonal_restriction & (~T[i + k][i] | temp)
+    diagonal_restriction = diagonal_restriction.restrict(queens)
+    return diagonal_restriction
 
 #same as above, but for diagonals pointing SW-NE  
-def diagonal_restrictions_3(T, n):
-    diagonal_restrictions = 1
+def diagonal_restrictions_3(T, n, queens):
+    diagonal_restriction = 1
     for k in range(0, n):
         for i in range(0, n - 1 - k):
             temp = 1
             for j in range(i + 1, n - k):
                 temp = temp & ~T[n - 1 - k - j][j]
-            diagonal_restrictions = diagonal_restrictions & (~T[n - 1 - k - i][i] | temp)
-    return diagonal_restrictions
+            diagonal_restriction = diagonal_restriction & (~T[n - 1 - k - i][i] | temp)
+    diagonal_restriction = diagonal_restriction.restrict(queens)
+    return diagonal_restriction
 
-def diagonal_restrictions_4(T, n):
-    diagonal_restrictions = 1
+def diagonal_restrictions_4(T, n, queens):
+    diagonal_restriction = 1
     for k in range(1, n):
         for i in range(0, n - 1 - k):
             temp = 1
             for j in range(i + 1, n - k):
                 temp = temp & ~T[n - 1 - j][j + k]
-            diagonal_restrictions = diagonal_restrictions & (~T[n - 1 - i][i + k] | temp)
-    return diagonal_restrictions
+            diagonal_restriction = diagonal_restriction & (~T[n - 1 - i][i + k] | temp)
+    diagonal_restriction = diagonal_restriction.restrict(queens)
+    return diagonal_restriction
 
 def n_queens_BDD(T, n, queens):
-    expr = row_restrictions(T, n) & column_restrictions(T, n)
-    expr = expr.restrict(queens)
-    expr = expr & diagonal_restrictions_1(T, n) & diagonal_restrictions_2(T, n)
-    expr = expr.restrict(queens)
-    expr = expr & diagonal_restrictions_3(T, n) & diagonal_restrictions_4(T, n)
-    expr = expr.restrict(queens)
+    expr = row_restrictions(T, n, queens) & column_restrictions(T, n, queens)
+    expr = expr & diagonal_restrictions_1(T, n, queens) & diagonal_restrictions_2(T, n, queens)
+    expr = expr & diagonal_restrictions_3(T, n, queens) & diagonal_restrictions_4(T, n, queens)
     return expr 
-
+#displays the solution of a SAT BDD as a chess board
 def display(solution, T, n):
     chars = list()
     for r in range(n):
@@ -95,7 +108,6 @@ def display(solution, T, n):
             chars.append("\n")
     print("".join(chars))
 
-#~ ´ ^ ` <= nao apague esta linha por enquanto
 data = sys.stdin.readlines()
 
 n = int(data[0].split()[0])
@@ -111,7 +123,7 @@ for i in range(1, k + 1):
 bdd = n_queens_BDD(T, n, queens)
 
 if bdd.is_zero():
-    print("UNSAT") #imprime se e possivel preencher
+    print("UNSAT")
 else:
-    print("SAT") #imprime se e possivel preencher
+    print("SAT")
     display(bdd.satisfy_one(), T, n)
