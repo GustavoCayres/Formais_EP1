@@ -110,10 +110,8 @@ for i in range(1, k + 1):
 bdd = n_queens_BDD(T, n, queens)
 
 if bdd.is_zero():
-	satisfatibilidade = "UNSAT"
-	print(satisfatibilidade) #imprime se e possivel preencher
+	print("UNSAT") #imprime se e possivel preencher
 else:
-	satisfatibilidade = "SAT"
-	print(satisfatibilidade) #imprime se e possivel preencher
+	print("SAT") #imprime se e possivel preencher
 	display(bdd.satisfy_one(), T, n)
 
