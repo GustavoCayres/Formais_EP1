@@ -74,22 +74,31 @@ def diagonal_restrictions_4(T, n):
     return diagonal_restrictions
 
 def n_queens_BDD(T, n, queens):
+<<<<<<< HEAD
     expr = row_restrictions(T, n) & column_restrictions(T, n)
     expr = expr.restrict(queens)
     expr = expr & diagonal_restrictions_1(T, n) & diagonal_restrictions_2(T, n)
     expr = expr.restrict(queens)
     expr = expr & diagonal_restrictions_3(T, n) & diagonal_restrictions_4(T, n)
     expr = expr.restrict(queens)
+=======
+    expr = row_restrictions(T, n).restrict(queens) & column_restrictions(T, n).restrict(queens)
+    expr.restrict(queens)
+    expr = expr & diagonal_restrictions_1(T, n).restrict(queens) & diagonal_restrictions_2(T, n).restrict(queens)
+    expr.restrict(queens)
+    expr = expr & diagonal_restrictions_3(T, n).restrict(queens) & diagonal_restrictions_4(T, n).restrict(queens)
+    expr.restrict(queens)
+>>>>>>> 11def72f3f8f09c418eef4e138085bb231811555
     return expr 
 
 def display(solution, T, n):
     chars = list()
     for r in range(n):
         for c in range(n):
-            if solution[T[r,c]]:
-                chars.append("Q")
-            else:
-                chars.append(".")
+            	if not solution[T[r,c]] in locals()  or solution[T[r,c]]: #tem q checar se essa variavel nao existe
+                	chars.append("Q")
+            	else:
+                	chars.append(".")
         if r != n-1:
             chars.append("\n")
     print("".join(chars))
@@ -108,10 +117,10 @@ for i in range(1, k + 1):
     queens[T[x][y]] = 1
 print(queens)
 bdd = n_queens_BDD(T, n, queens)
+print(bdd.satisfy_one())
 
 if bdd.is_zero():
 	print("UNSAT") #imprime se e possivel preencher
 else:
 	print("SAT") #imprime se e possivel preencher
 	display(bdd.satisfy_one(), T, n)
-
