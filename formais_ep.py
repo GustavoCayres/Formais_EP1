@@ -75,11 +75,11 @@ def diagonal_restrictions_4(T, n):
 
 def n_queens_BDD(T, n, queens):
     expr = row_restrictions(T, n) & column_restrictions(T, n)
-    expr.restrict(queens)
+    expr = expr.restrict(queens)
     expr = expr & diagonal_restrictions_1(T, n) & diagonal_restrictions_2(T, n)
-    expr.restrict(queens)
+    expr = expr.restrict(queens)
     expr = expr & diagonal_restrictions_3(T, n) & diagonal_restrictions_4(T, n)
-    expr.restrict(queens)
+    expr = expr.restrict(queens)
     return expr 
 
 def display(solution, T, n):
@@ -106,7 +106,7 @@ for i in range(1, k + 1):
     x = int(data[i].split()[0])
     y = int(data[i].split()[1])
     queens[T[x][y]] = 1
-
+print(queens)
 bdd = n_queens_BDD(T, n, queens)
 
 if bdd.is_zero():
