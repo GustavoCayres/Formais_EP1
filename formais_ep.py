@@ -73,10 +73,13 @@ def diagonal_restrictions_4(T, n):
             diagonal_restrictions = diagonal_restrictions & (~T[n - 1 - i][i + k] | temp)
     return diagonal_restrictions
 
-def n_queens_expression(T, n):
+def n_queens_BDD(T, n, queens):
     expr = row_restrictions(T, n) & column_restrictions(T, n)
+    expr.restrict(queens)
     expr = expr & diagonal_restrictions_1(T, n) & diagonal_restrictions_2(T, n)
+    expr.restrict(queens)
     expr = expr & diagonal_restrictions_3(T, n) & diagonal_restrictions_4(T, n)
+    expr.restrict(queens)
     return expr 
 
 def display(solution, T, n):
@@ -98,13 +101,13 @@ n = int(data[0].split()[0])
 T = bddvars("T", n, n)
 
 k = int(data[0].split()[1])
-restrictions = {}
+queens = {}
 for i in range(1, k + 1):
     x = int(data[i].split()[0])
     y = int(data[i].split()[1])
-    restrictions[T[x][y]] = 1
+    queens[T[x][y]] = 1
 
-bdd = n_queens_expression(T, n).restrict(restrictions)
+bdd = n_queens_BDD(T, n, queens)
 
 if bdd.is_zero():
 	satisfatibilidade = "UNSAT"
