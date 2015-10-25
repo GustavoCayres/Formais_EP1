@@ -115,7 +115,7 @@ for i in range(1, k + 1):
     x = int(data[i].split()[0])
     y = int(data[i].split()[1])
     queens[T[x][y]] = 1
-print(queens)
+
 bdd = n_queens_BDD(T, n, queens)
 print(bdd.satisfy_one())
 
