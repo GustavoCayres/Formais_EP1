@@ -86,7 +86,7 @@ def display(solution, T, n):
     chars = list()
     for r in range(n):
         for c in range(n):
-            	if not solution(T[r,c]) in locals()  or solution[T[r,c]]: #tem q checar se essa variavel nao existe
+            	if not solution[T[r,c]] in locals()  or solution[T[r,c]]: #tem q checar se essa variavel nao existe
                 	chars.append("Q")
             	else:
                 	chars.append(".")
