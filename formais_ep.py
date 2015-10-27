@@ -1,12 +1,12 @@
 ###########################################
 #Grupo:
 #   Gustavo Rodrigues Cayres, nUSP: 8584323
-#   Pedro Marcondes
+#   Pedro Marcondes, nUSP: 8941168
 ###########################################
 
 from pyeda.inter import *
 import sys
-
+ 
 #restricts the existence of queens per row
 def row_restrictions(T, n, queens):
     row_restriction = 1
